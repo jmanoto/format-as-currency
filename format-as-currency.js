@@ -1,5 +1,5 @@
 angular
-.module('bcherny/formatAsCurrency', [])
+.module('jmanoto/formatAsCurrency', [])
 .service('formatAsCurrencyUtilities', function () {
 
   // (haystack: String, needles: Array<String>) => Number
@@ -62,14 +62,28 @@ angular
     link: function (scope, element, _, ngModel) {
 
       ngModel.$formatters.push(function (value) {
-        return $filter('currency')(value)
+        if (value === 0.0 || isNaN(value)) {
+          console.log("formatting zero", value);
+          return '$';
+        } else {
+          var formatted = $filter('currency')(value);
+          console.log("formatting", formatted, value);
+          if (formatted.indexOf('.00') >= 0) {
+            console.log("Removing cents");
+            formatted = formatted.substring(0, formatted.indexOf('.'));
+          }
+          return formatted;
+        }
       })
 
       ngModel.$parsers.push(function (value) {
 
+        
+        console.log("parsing", value);
+
         var number = util
           .toFloat(value)
-          .toFixed(2)
+          // .toFixed(2)
 
         if (ngModel.$validators.currency(number)) {
 
@@ -94,6 +108,9 @@ angular
             return position + specialCharactersCountChange
           })
 
+          if (formatted === '$0.00') { formatted = '$' }
+          if (formatted.indexOf('.00') > 0) { formatted = formatted.substring(0, formatted.indexOf('.')); }
+
           // set the formatted value in the view
           ngModel.$setViewValue(formatted)
           ngModel.$render()
@@ -105,7 +122,43 @@ angular
 
         return number
 
-      })
+      });
+
+      element.on('keydown', function(event) {
+        var charCode = event.which || event.keyCode;
+
+        switch (charCode) {
+          case 8: // Backspace
+            var pointIndex = element[0].value.indexOf('.');
+            if (element[0].selectionStart === element[0].selectionEnd && element[0].selectionStart === pointIndex + 1) {
+              // console.log("Backspacing Point", pointIndex, element[0].selectionStart);
+              element[0].value = element[0].value.substring(0, pointIndex);
+              return false;
+            }
+            break;
+          case 46: // Delete
+            var pointIndex = element[0].value.indexOf('.');
+            if (element[0].selectionStart === element[0].selectionEnd && element[0].selectionStart === pointIndex) {
+              // console.log("Deleting Point", pointIndex, element[0].selectionStart);
+              element[0].value = element[0].value.substring(0, pointIndex);
+            }
+            break;
+          case 110:
+          case 190:
+            if (element[0].value.indexOf('.') < 0) {
+              element[0].value = element[0].value.substring(0, element[0].selectionStart) + '.00';
+              element[0].selectionStart = element[0].selectionEnd = element[0].value.length - 2;
+              return false;
+            } else {
+              element[0].value = element[0].value.substring(0, element[0].selectionStart) + '.00';
+              element[0].selectionStart = element[0].selectionEnd = element[0].value.length - 2;
+              return true;
+            }
+            break;
+        }
+
+        console.log("Key", charCode);
+      });
 
       ngModel.$validators.currency = function (modelValue) {
         return !isNaN(modelValue)
