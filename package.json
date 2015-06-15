@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/bcherny/format-as-currency.git"
+    "url": "https://github.com/jmanoto/format-as-currency.git"
   },
   "keywords": [
     "angular",
@@ -29,12 +29,12 @@
     "nice",
     "pretty"
   ],
-  "author": "Boris Cherny <boris@performancejs.com> (http://performancejs.com/)",
-  "license": "CC0",
+  "author": "Jeremy Manoto <jeremy.manoto@invoice2go.com>",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bcherny/format-as-currency/issues"
+    "url": "https://github.com/jmanoto/format-as-currency/issues"
   },
-  "homepage": "https://github.com/bcherny/format-as-currency",
+  "homepage": "https://github.com/jmanoto/format-as-currency",
   "devDependencies": {
     "bower": "^1.3.12",
     "gulp": "^3.8.11",

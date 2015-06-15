@@ -3,7 +3,7 @@
   "main": "format-as-currency.js",
   "version": "1.0.0",
   "authors": [
-    "Boris Cherny <boris@performancejs.com>"
+    "Jeremy Manoto <jeremy.manoto@invoice2go.com>"
   ],
   "description": "Angular directive to format an input as a currency as the user types",
   "moduleType": [
@@ -24,8 +24,8 @@
     "nice",
     "pretty"
   ],
-  "license": "CC0",
-  "homepage": "https://github.com/bcherny/format-as-currency",
+  "license": "MIT",
+  "homepage": "https://github.com/jmanoto/format-as-currency",
   "ignore": [
     "**/.*",
     "node_modules",
