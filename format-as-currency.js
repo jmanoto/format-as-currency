@@ -133,6 +133,7 @@ angular
             if (element[0].selectionStart === element[0].selectionEnd && element[0].selectionStart === pointIndex + 1) {
               // console.log("Backspacing Point", pointIndex, element[0].selectionStart);
               element[0].value = element[0].value.substring(0, pointIndex);
+              ngModel.$setViewValue(element[0].value);
               return false;
             }
             break;
@@ -141,6 +142,8 @@ angular
             if (element[0].selectionStart === element[0].selectionEnd && element[0].selectionStart === pointIndex) {
               // console.log("Deleting Point", pointIndex, element[0].selectionStart);
               element[0].value = element[0].value.substring(0, pointIndex);
+              ngModel.$setViewValue(element[0].value);
+              return false;
             }
             break;
           case 110:
