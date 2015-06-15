@@ -63,13 +63,13 @@ angular
 
       ngModel.$formatters.push(function (value) {
         if (value === 0.0 || isNaN(value)) {
-          console.log("formatting zero", value);
+          // console.log("formatting zero", value);
           return '$';
         } else {
           var formatted = $filter('currency')(value);
-          console.log("formatting", formatted, value);
+          // console.log("formatting", formatted, value);
           if (formatted.indexOf('.00') >= 0) {
-            console.log("Removing cents");
+            // console.log("Removing cents");
             formatted = formatted.substring(0, formatted.indexOf('.'));
           }
           return formatted;
@@ -79,7 +79,7 @@ angular
       ngModel.$parsers.push(function (value) {
 
         
-        console.log("parsing", value);
+        // console.log("parsing", value);
 
         var number = util
           .toFloat(value)
@@ -166,7 +166,6 @@ angular
             break;
         }
 
-        console.log("Key", charCode);
       });
 
       ngModel.$validators.currency = function (modelValue) {
