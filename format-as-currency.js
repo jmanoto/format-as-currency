@@ -124,11 +124,16 @@ angular
 
       });
 
+      var BACKSPACE = 8;
+      var DELETE = 46;
+      var PERIOD_ALPHA = 190;
+      var PERIOD_NUMERIC = 110;
+
       element.on('keydown', function(event) {
         var charCode = event.which || event.keyCode;
 
         switch (charCode) {
-          case 8: // Backspace
+          case BACKSPACE: // Backspace
             var pointIndex = element[0].value.indexOf('.');
             if (element[0].selectionStart === element[0].selectionEnd && element[0].selectionStart === pointIndex + 1) {
               // console.log("Backspacing Point", pointIndex, element[0].selectionStart);
@@ -137,7 +142,7 @@ angular
               return false;
             }
             break;
-          case 46: // Delete
+          case DELETE: // Delete
             var pointIndex = element[0].value.indexOf('.');
             if (element[0].selectionStart === element[0].selectionEnd && element[0].selectionStart === pointIndex) {
               // console.log("Deleting Point", pointIndex, element[0].selectionStart);
@@ -146,15 +151,16 @@ angular
               return false;
             }
             break;
-          case 110:
-          case 190:
+          case PERIOD_ALPHA:
+          case PERIOD_ALPHA:
             if (element[0].value.indexOf('.') < 0) {
               element[0].value = element[0].value.substring(0, element[0].selectionStart) + '.00';
-              element[0].selectionStart = element[0].selectionEnd = element[0].value.length - 2;
+
+              element[0].selectionStart = element[0].selectionEnd = element[0].value.length - '00'.length;
               return false;
             } else {
               element[0].value = element[0].value.substring(0, element[0].selectionStart) + '.00';
-              element[0].selectionStart = element[0].selectionEnd = element[0].value.length - 2;
+              element[0].selectionStart = element[0].selectionEnd = element[0].value.length - '00'.length;
               return true;
             }
             break;
