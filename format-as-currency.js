@@ -61,6 +61,8 @@ angular
     restrict: 'A',
     link: function (scope, element, _, ngModel) {
 
+      var isAngular13 = (angular.version.major === 1 && angular.version.minor <= 3);
+
       ngModel.$formatters.push(function (value) {
         if (value === 0.0 || isNaN(value)) {
           // console.log("formatting zero", value);
@@ -78,14 +80,17 @@ angular
 
       ngModel.$parsers.push(function (value) {
 
-        
         // console.log("parsing", value);
 
         var number = util
           .toFloat(value)
           // .toFixed(2)
 
-        if (ngModel.$validators.currency(number)) {
+        var isValueNumber = isAngular13 ? !isNaN(number) : ngModel.$validators.currency(number);
+        // console.log('parser', ngModel.$validators.currency(number), isValueNumber, number);
+
+        if (isValueNumber) {
+        // if (isValueNumber) {
 
           var formatted = $filter('currency')(number)
           var specialCharacters = [',', CURRENCY_SYMBOL]
@@ -129,6 +134,7 @@ angular
       var PERIOD_ALPHA = 190;
       var PERIOD_NUMERIC = 110;
 
+      // Handle keyboard presses
       element.on('keydown', function(event) {
         var charCode = event.which || event.keyCode;
 
@@ -166,11 +172,27 @@ angular
             break;
         }
 
+        return true;
+
       });
 
-      ngModel.$validators.currency = function (modelValue) {
-        return !isNaN(modelValue)
+      // Version switch 
+      if (angular.version.major === 1 && angular.version.minor <= 2) {
+        // Old version (angular 1.2)
+        scope.$watch(function() {
+          console.log("watching", ngModel.$modelValue);
+          return !isNaN(ngModel.$modelValue);
+        }, function(validity) {
+          console.log("setting validity", validity)
+          ngModel.$setValidity('formatAsCurrency', validity);
+        });
+      } else {
+        // Modern Angular version
+        ngModel.$validators.currency = function (modelValue) {
+          return !isNaN(modelValue)
+        }
       }
+
 
     }
   }
