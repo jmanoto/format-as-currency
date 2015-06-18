@@ -1,7 +1,7 @@
 {
   "name": "format-as-currency-jm",
   "main": "format-as-currency.js",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "authors": [
     "Jeremy Manoto <jeremy.manoto@invoice2go.com>"
   ],
