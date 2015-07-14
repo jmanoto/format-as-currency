@@ -54,12 +54,12 @@ angular
 
   var CURRENCY_SYMBOL = $locale.NUMBER_FORMATS.CURRENCY_SYM
 
-  var util = formatAsCurrencyUtilities
+  var util = formatAsCurrencyUtilities;
 
   return {
     require: 'ngModel',
     restrict: 'A',
-    link: function (scope, element, _, ngModel) {
+    link: function (scope, element, attrs, ngModel) {
 
       var isAngular13 = (angular.version.major === 1 && angular.version.minor <= 3);
 
@@ -84,7 +84,7 @@ angular
 
         var number = util
           .toFloat(value)
-          // .toFixed(2)
+          .toFixed(2)
 
         var isValueNumber = isAngular13 ? !isNaN(number) : ngModel.$validators.currency(number);
         // console.log('parser', ngModel.$validators.currency(number), isValueNumber, number);
@@ -117,12 +117,12 @@ angular
           if (formatted.indexOf('.00') > 0) { formatted = formatted.substring(0, formatted.indexOf('.')); }
 
           // set the formatted value in the view
-          ngModel.$setViewValue(formatted)
-          ngModel.$render()
+          ngModel.$setViewValue(formatted);
+          ngModel.$render();
 
           // set the cursor back to its expected position
           // (since $render resets the cursor the the end)
-          element[0].setSelectionRange(selectonRange[0], selectonRange[1])
+          ('setSelectionRange' in element[0]) && element[0].setSelectionRange(selectonRange[0], selectonRange[1])
         }
 
         return number
@@ -157,7 +157,7 @@ angular
               return false;
             }
             break;
-          case PERIOD_ALPHA:
+          case PERIOD_NUMERIC:
           case PERIOD_ALPHA:
             if (element[0].value.indexOf('.') < 0) {
               element[0].value = element[0].value.substring(0, element[0].selectionStart) + '.00';
@@ -176,14 +176,14 @@ angular
 
       });
 
-      // Version switch 
+      // Version switch
       if (angular.version.major === 1 && angular.version.minor <= 2) {
         // Old version (angular 1.2)
         scope.$watch(function() {
-          console.log("watching", ngModel.$modelValue);
+          // console.log("watching", ngModel.$modelValue);
           return !isNaN(ngModel.$modelValue);
         }, function(validity) {
-          console.log("setting validity", validity)
+          // console.log("setting validity", validity)
           ngModel.$setValidity('formatAsCurrency', validity);
         });
       } else {
