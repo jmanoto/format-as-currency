@@ -62,15 +62,21 @@ angular
     link: function (scope, element, attrs, ngModel) {
 
       var isAngular13 = (angular.version.major === 1 && angular.version.minor <= 3);
+      var lastChar = null;
 
       ngModel.$formatters.push(function (value) {
         if (value === 0.0 || isNaN(value)) {
-          // console.log("formatting zero", value);
-          return '$';
+          if (lastChar === ZERO_ALPHA) {
+            return '$0';
+          } else if (lastChar === PERIOD_ALPHA || lastChar === PERIOD_NUMERIC){
+            return '$0.';
+          } else {
+            return '$';
+          }
         } else {
           var formatted = $filter('currency')(value);
           // console.log("formatting", formatted, value);
-          if (formatted.indexOf('.00') >= 0) {
+          if (formatted.indexOf('.00') >= 0 && (lastChar != PERIOD_ALPHA && lastChar != PERIOD_NUMERIC)) {
             // console.log("Removing cents");
             formatted = formatted.substring(0, formatted.indexOf('.'));
           }
@@ -111,10 +117,12 @@ angular
             element[0].selectionEnd
           ].map(function (position) {
             return position + specialCharactersCountChange
-          })
+          });
 
           if (formatted === '$0.00') { formatted = '$' }
-          if (formatted.indexOf('.00') > 0) { formatted = formatted.substring(0, formatted.indexOf('.')); }
+          if (formatted.indexOf('.00') > 0 && (lastChar != PERIOD_ALPHA && lastChar != PERIOD_NUMERIC)) {
+            formatted = formatted.substring(0, formatted.indexOf('.'));
+          }
 
           // set the formatted value in the view
           ngModel.$setViewValue(formatted);
@@ -133,10 +141,14 @@ angular
       var DELETE = 46;
       var PERIOD_ALPHA = 190;
       var PERIOD_NUMERIC = 110;
+      var ZERO_ALPHA = 48;
 
       // Handle keyboard presses
       element.on('keydown', function(event) {
         var charCode = event.which || event.keyCode;
+        lastChar = charCode;
+
+        // console.log("Last Char: ", lastChar);
 
         switch (charCode) {
           case BACKSPACE: // Backspace
@@ -159,15 +171,31 @@ angular
             break;
           case PERIOD_NUMERIC:
           case PERIOD_ALPHA:
+            console.log("adding period")
             if (element[0].value.indexOf('.') < 0) {
+              // Check if a zero should be prepended
+              if (element[0].value === '$') {
+                element[0].value = '$0';
+              }
+
+              // No period existing
               element[0].value = element[0].value.substring(0, element[0].selectionStart) + '.00';
 
               element[0].selectionStart = element[0].selectionEnd = element[0].value.length - '00'.length;
               return false;
             } else {
+              // Already has period
               element[0].value = element[0].value.substring(0, element[0].selectionStart) + '.00';
               element[0].selectionStart = element[0].selectionEnd = element[0].value.length - '00'.length;
               return true;
+            }
+            break;
+          case ZERO_ALPHA:
+            if (element[0].value.indexOf('.') >= 0) {
+              if (element[0].selectionStart > element[0].value.indexOf('.')) {
+                element[0].selectionStart = element[0].selectionStart + 1;
+                return false;
+              }
             }
             break;
         }
