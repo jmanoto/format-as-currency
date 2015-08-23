@@ -66,7 +66,7 @@ angular
 
       ngModel.$formatters.push(function (value) {
         if (value === 0.0 || isNaN(value)) {
-          if (lastChar === ZERO_ALPHA) {
+          if (lastChar === ZERO_ALPHA || lastChar === ZERO_NUMERIC) {
             return '$0';
           } else if (lastChar === PERIOD_ALPHA || lastChar === PERIOD_NUMERIC){
             return '$0.';
@@ -142,6 +142,7 @@ angular
       var PERIOD_ALPHA = 190;
       var PERIOD_NUMERIC = 110;
       var ZERO_ALPHA = 48;
+      var ZERO_NUMERIC = 96;
 
       // Handle keyboard presses
       element.on('keydown', function(event) {
@@ -171,7 +172,6 @@ angular
             break;
           case PERIOD_NUMERIC:
           case PERIOD_ALPHA:
-            console.log("adding period")
             if (element[0].value.indexOf('.') < 0) {
               // Check if a zero should be prepended
               if (element[0].value === '$') {
@@ -190,6 +190,7 @@ angular
               return true;
             }
             break;
+          case ZERO_NUMERIC:
           case ZERO_ALPHA:
             if (element[0].value.indexOf('.') >= 0) {
               if (element[0].selectionStart > element[0].value.indexOf('.')) {
